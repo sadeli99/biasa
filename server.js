@@ -1,26 +1,62 @@
 const express = require('express');
-const PoopFile = require('./poopFile');
+const bodyParser = require('body-parser');
+const PoopFile = require('./poopFile'); // Sesuaikan path dengan lokasi poopFile.js
 
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.get('/', async (req, res) => {
-    res.send('Welcome to PoopFile API!');
-});
+// Middleware untuk parsing JSON
+app.use(bodyParser.json());
 
-app.get('/files', async (req, res) => {
-    const url = req.query.url;
-    if (!url) return res.status(400).send({ error: 'URL parameter is required' });
+// Route untuk handle POST request
+app.post('/file', async (req, res) => {
+    // Default response
+    let result = {
+        status: 'failed',
+        message: 'invalid params',
+        file: []
+    };
 
-    const poopFile = new PoopFile();
     try {
-        await poopFile.getAllFile(url);
-        res.status(200).send(poopFile.file);
+        // Ambil URL dari body request
+        const data = req.body;
+        const url = data.url;
+
+        if (url) {
+            const PF = new PoopFile();
+
+            // Proses URL untuk mendapatkan file
+            await PF.getAllFile(url);
+            const listFile = PF.file;
+
+            // Kondisi respons
+            if (listFile.length > 0) {
+                result = {
+                    status: 'success',
+                    message: '',
+                    file: listFile
+                };
+            } else {
+                result = {
+                    status: 'failed',
+                    message: 'file not found',
+                    file: []
+                };
+            }
+        }
     } catch (error) {
-        res.status(500).send({ error: 'Failed to process the URL', details: error.message });
+        result = {
+            status: 'failed',
+            message: `I don't know why error in poop app: ${error.message}`,
+            file: []
+        };
     }
+
+    // Kirim respons dalam format JSON
+    res.json(result);
 });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+// Jalankan server
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
