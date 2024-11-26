@@ -1,19 +1,16 @@
 {
-  "name": "poophd-api",
+  "name": "poop",
   "version": "1.0.0",
-  "description": "API untuk mengambil direct link dari halaman poophd.vip",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "vercel dev"
+    "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "node-fetch": "^3.2.0",
-    "jsdom": "^21.1.0"
-  },
-  "engines": {
-    "node": "16.x"
+    "jsdom": "^20.0.0",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1",
+    "cors": "^2.8.5"
   },
   "author": "",
   "license": "ISC"
