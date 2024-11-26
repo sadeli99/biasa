@@ -1,44 +1,39 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-const defaultDomain = 'poop.run';
-const headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
-};
-
 class PoopFile {
     constructor() {
         this.file = [];
-        this.r = axios.create({ headers });
+        this.r = axios.create({
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
+            }
+        });
     }
 
     async redirect(url) {
         try {
             const response = await this.r.head(url, { maxRedirects: 0 }).catch(err => err.response);
-            if (!response || !response.request || !response.request.res) {
-                throw new Error('Failed to resolve redirected URL');
-            }
-            return response.request.res.responseUrl || null;
+            return response?.request?.res?.responseUrl || null;
         } catch (error) {
             console.error('Error in redirect:', error.message);
             throw new Error('Failed to redirect URL');
         }
     }
 
-    async getAllFile(url) {
-        if (!url) {
-            throw new Error('URL is required');
+    async getAllFile(url, domain) {
+        if (!url || !domain) {
+            throw new Error('URL and domain are required');
         }
 
         try {
             if (url.includes('/e/')) {
                 const id = url.replace('//', '/').split('/').pop().split('?')[0].toLowerCase();
-                url = `https://${defaultDomain}/d/${id}`;
-                await this.getAllFile(url);
+                url = `https://${domain}/d/${id}`;
+                await this.getAllFile(url, domain); // Recursive call
                 return;
             }
 
-            // Redirect and check the resolved URL
             const redirectedUrl = await this.redirect(url);
             if (!redirectedUrl) {
                 throw new Error('Failed to resolve redirected URL');
