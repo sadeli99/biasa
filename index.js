@@ -1,22 +1,24 @@
-const express = require('express');
+const https = require('https');
 const fetch = require('node-fetch');
 const { JSDOM } = require('jsdom');
-const app = express();
 
-// Vercel menyediakan port secara otomatis melalui variabel lingkungan
-const PORT = process.env.PORT || 3000;
+// Handler untuk API di Vercel
+module.exports = async (req, res) => {
+    // Mengambil query parameter 'id' dari URL
+    const urlParams = new URLSearchParams(req.url.split('?')[1]);
+    const id = urlParams.get('id');
 
-app.get('/api', async (req, res) => {
-    const id = req.query.id;  // Ambil parameter 'id' dari URL
     if (!id) {
-        return res.status(400).json({ error: 'ID parameter is required' });
+        // Jika id tidak ada, kirim error 400
+        res.status(400).json({ error: 'ID parameter is required' });
+        return;
     }
 
-    const url = `https://poophd.vip/p0?id=${id}`;  // URL untuk mengambil halaman
+    const targetUrl = `https://poophd.vip/p0?id=${id}`;  // URL halaman yang akan diambil
 
     try {
-        // Ambil HTML dari URL
-        const response = await fetch(url);
+        // Mengambil HTML dari URL target
+        const response = await fetch(targetUrl);
         const html = await response.text();
 
         // Parse HTML menggunakan jsdom
@@ -32,18 +34,20 @@ app.get('/api', async (req, res) => {
         scriptTags.forEach(script => {
             const scriptContent = script.textContent;
 
-            // Periksa apakah script berisi 'fetch' dan 'Authorization'
-            if (scriptContent.includes('fetch(') && scriptContent.includes('Authorization')) {
+            // Periksa apakah script berisi 'fetchDirectLink'
+            if (scriptContent.includes('fetchDirectLink')) {
                 // Ambil URL yang digunakan dalam fetch
-                const fetchUrlStart = scriptContent.indexOf('https://');
-                if (fetchUrlStart !== -1) {
-                    fetchUrl = scriptContent.slice(fetchUrlStart, scriptContent.indexOf('"', fetchUrlStart));  // Ambil URL hingga tanda petik
+                const fetchUrlStart = scriptContent.indexOf('fetch("') + 7; // Menambahkan 7 untuk melewati 'fetch("'
+                const fetchUrlEnd = scriptContent.indexOf('"', fetchUrlStart);
+                if (fetchUrlStart !== -1 && fetchUrlEnd !== -1) {
+                    fetchUrl = scriptContent.slice(fetchUrlStart, fetchUrlEnd);  // Ambil URL hingga tanda petik
                 }
 
                 // Ambil Authorization header
-                const authStart = scriptContent.indexOf("'Authorization':");
-                if (authStart !== -1) {
-                    authorizationHeader = scriptContent.slice(authStart + 17, scriptContent.indexOf("'", authStart + 17));  // Ambil Authorization
+                const authStart = scriptContent.indexOf("'Authorization':") + 17; // Menambahkan 17 untuk melewati 'Authorization': '
+                const authEnd = scriptContent.indexOf("'", authStart);
+                if (authStart !== -1 && authEnd !== -1) {
+                    authorizationHeader = scriptContent.slice(authStart, authEnd);  // Ambil Authorization
                 }
             }
         });
@@ -70,14 +74,9 @@ app.get('/api', async (req, res) => {
         const directLink = jsonResponse.direct_link;  // Ambil direct link dari respons JSON
 
         // Kirimkan direct link sebagai respons API
-        return res.json({ direct_link: directLink });
+        res.status(200).json({ direct_link: directLink });
     } catch (error) {
         console.error('Error:', error);
-        return res.status(500).json({ error: 'An error occurred while fetching the direct link' });
+        res.status(500).json({ error: 'An error occurred while fetching the direct link' });
     }
-});
-
-// Vercel akan menangani port secara otomatis
-app.listen(process.env.PORT, () => {
-    console.log('Server is running...');
-});
+};
