@@ -27,6 +27,12 @@ module.exports = async (req, res) => {
         let fetchUrl = '';
         let authorizationHeader = '';
 
+        let imageUrl = '';  // Menyimpan URL gambar
+
+        // Regex untuk mencari URL gambar setelah 'image:'
+        const imageRegex = /image:\s*["']([^"']+)["']/;
+
+        
         scriptTags.forEach(script => {
             const scriptContent = script.textContent;
 
@@ -40,6 +46,11 @@ module.exports = async (req, res) => {
                 if (authMatch && authMatch[1]) {
                     authorizationHeader = authMatch[1];
                 }
+            }
+
+            const imageMatch = scriptContent.match(imageRegex);
+            if (imageMatch && imageMatch[1]) {
+                imageUrl = imageMatch[1];  // Menyimpan URL gambar yang ditemukan
             }
         });
 
@@ -61,7 +72,7 @@ module.exports = async (req, res) => {
         const jsonResponse = await directLinkResponse.json();
         const directLink = jsonResponse.direct_link;
 
-        res.status(200).json({ direct_link: directLink });
+        res.status(200).json({ direct_link: directLink, image: imageUrl });
     } catch (error) {
         console.error('Error:', error);
         res.status (500).json({ error: 'An error occurred while fetching the direct link' });
