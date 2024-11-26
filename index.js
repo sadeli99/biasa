@@ -2,6 +2,8 @@ const express = require('express');
 const fetch = require('node-fetch');
 const { JSDOM } = require('jsdom');
 const app = express();
+
+// Vercel menyediakan port secara otomatis melalui variabel lingkungan
 const PORT = process.env.PORT || 3000;
 
 app.get('/api', async (req, res) => {
@@ -75,6 +77,7 @@ app.get('/api', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Vercel akan menangani port secara otomatis
+app.listen(process.env.PORT, () => {
+    console.log('Server is running...');
 });
