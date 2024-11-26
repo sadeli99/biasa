@@ -4,6 +4,18 @@ const { JSDOM } = require('jsdom');
 
 // Handler untuk API di Vercel
 module.exports = async (req, res) => {
+
+    // Menambahkan header CORS ke dalam respons
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Mengatasi preflight request (OPTIONS)
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+    
     const urlParams = new URLSearchParams(req.url.split('?')[1]);
     const id = urlParams.get('id');
 
@@ -17,11 +29,6 @@ module.exports = async (req, res) => {
     try {
         const response = await fetch(targetUrl);
         const html = await response.text();
-
-        // Set header CORS untuk membolehkan akses dari semua domain
-        res.setHeader('Access-Control-Allow-Origin', '*'); 
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
         // Tambahkan log untuk melihat isi HTML
         console.log(html); 
