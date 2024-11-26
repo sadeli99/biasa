@@ -25,11 +25,28 @@ module.exports = async (req, res) => {
     }
 
     const targetUrl = `https://poophd.vip/p0?id=${id}`;
+    const targetUrl2 = `https://poophd.vip/d/${id}`;
 
+    
     try {
         const response = await fetch(targetUrl);
         const html = await response.text();
 
+        // Fetch data dari targetUrl2
+        const response2 = await fetch(targetUrl2);
+        const html2 = await response2.text();
+        // Proses HTML dari targetUrl2 dengan JSDOM
+        const dom2 = new JSDOM(html2);
+        const doc2 = dom2.window.document;
+
+
+        // Ambil elemen dari targetUrl2
+        const name = doc2.querySelector('h4') ? doc2.querySelector('h4').textContent.trim() : 'n/a';
+        const duration = doc2.querySelector('.length') ? doc2.querySelector('.length').textContent.trim() : 'n/a';
+        const size = doc2.querySelector('.size') ? doc2.querySelector('.size').textContent.trim() : 'n/a';
+        const vdate = doc2.querySelector('.uploadate') ? doc2.querySelector('.uploadate').textContent.trim() : 'n/a';
+
+        
         // Tambahkan log untuk melihat isi HTML
         console.log(html); 
 
@@ -84,7 +101,7 @@ module.exports = async (req, res) => {
         const jsonResponse = await directLinkResponse.json();
         const directLink = jsonResponse.direct_link;
 
-        res.status(200).json({ direct_link: directLink, image: imageUrl });
+        res.status(200).json({ direct_link: directLink, image: imageUrl, name: name, duration: duration, size: size, videodate: vdate });
     } catch (error) {
         console.error('Error:', error);
         res.status (500).json({ error: 'An error occurred while fetching the direct link' });
