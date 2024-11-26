@@ -9,13 +9,16 @@ const headers = {
 class PoopFile {
     constructor() {
         this.file = [];
-        this.r = require('axios').create({ headers });
+        this.r = axios.create({ headers });
     }
 
     async redirect(url) {
         try {
             const response = await this.r.head(url, { maxRedirects: 0 }).catch(err => err.response);
-            return response?.request?.res?.responseUrl || null;
+            if (!response || !response.request || !response.request.res) {
+                throw new Error('Failed to resolve redirected URL');
+            }
+            return response.request.res.responseUrl || null;
         } catch (error) {
             console.error('Error in redirect:', error.message);
             throw new Error('Failed to redirect URL');
@@ -35,6 +38,7 @@ class PoopFile {
                 return;
             }
 
+            // Redirect and check the resolved URL
             const redirectedUrl = await this.redirect(url);
             if (!redirectedUrl) {
                 throw new Error('Failed to resolve redirected URL');
@@ -44,7 +48,6 @@ class PoopFile {
             const req = await this.r.get(baseUrl);
             this.domain = new URL(req.request.res.responseUrl).hostname;
 
-            const cheerio = require('cheerio');
             const $ = cheerio.load(req.data);
             const typeUrl = req.request.res.responseUrl.split('/')[2]?.toLowerCase();
 
@@ -106,7 +109,6 @@ class PoopFile {
     async singleFile(url) {
         try {
             const req = await this.r.get(url);
-            const cheerio = require('cheerio');
             const $ = cheerio.load(req.data);
             const id = url.split('/').pop()?.split('?')[0];
             const name = $('h4').text().trim();
