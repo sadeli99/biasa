@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
     // URL sumber data dari parameter
     const sourceURL = req.query.url; // Ambil URL dari query parameter `url`
     if (!sourceURL) {
-        res.status(400).json({ error: 'Parameter `url` is required.' });
+        res.status(400).send('Parameter `url` is required.');
         return;
     }
 
@@ -61,12 +61,12 @@ module.exports = async (req, res) => {
             }
         });
 
-        // Gabungkan hasil menjadi teks, pisahkan dengan koma
+        // Gabungkan hasil menjadi teks biasa, pisahkan dengan koma
         const output = results.join(', ');
 
-        // Kirim hasil sebagai respons
-        res.status(200).json({ result: output });
+        // Kirim hasil sebagai respons teks biasa
+        res.status(200).send(output);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).send(`Error: ${error.message}`);
     }
 };
