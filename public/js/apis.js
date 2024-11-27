@@ -50,10 +50,14 @@ function fetchVideo() {
                 <p class="card-title f400 position-absolute m-2 rounded-5 py-2 px-3" style="top: 180px; right: 25px; font-size: 15px; background: rgba(225, 225, 225, 0.2); color: white;">${data.duration}</p>
                 <div class="mx-2 mt-4 mb-1">
                   <h5 class="card-title f400 titles">${data.name}</h5>
-                 <a href="${data.direct_link}" class="btn btn-dark mt-3 w-100 d-flex align-items-center justify-content-center p-3 rounded-4 f400 shadow-lg" download>
-                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" class="me-1" stroke-linejoin="round"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
-                 Download Video
-                 </a>
+                 <a href="${data.direct_link}" 
+                class="btn btn-dark mt-3 w-100 d-flex align-items-center justify-content-center p-3 rounded-4 f400 shadow-lg" 
+                download>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" class="me-1" stroke-linejoin="round">
+                <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
+                </svg>
+                Download ${data.size ? `(${data.size})` : ''}
+                </a>
                 </div>
               </div>
             `;
