@@ -53,11 +53,11 @@ module.exports = async (req, res) => {
                 url = url.replace(/\?top=1/, '');
 
                 // Hapus bagian /e/, /f/, atau /d/ dari URL
-                url = url.replace(/\/[dfe]\//, '/');
+                url = url.replace(/\/[dfe]\//, '');
 
                 // Ambil teks dari elemen
                 const text = linkElement.textContent.trim();
-                results.push(`${text} - ${url}`);
+                results.push(`${url}`);
             }
         });
 
