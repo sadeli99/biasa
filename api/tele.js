@@ -5,24 +5,34 @@ const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
 
-const TOKEN = "7799759103:AAEn03hiwvEVBmG7_2H11t4eC3JFS78v-DU"; // Ganti dengan token bot Anda
+// Token bot Telegram Anda
+const TOKEN = "7799759103:AAEn03hiwvEVBmG7_2H11t4eC3JFS78v-DU"; // Token bot yang Anda berikan
 const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
 const URI = `/webhook/${TOKEN}`;
-const WEBHOOK_URL = `https://biasa-alpha.vercel.app${URI}`; // Ganti dengan domain Vercel Anda
+const WEBHOOK_URL = `https://biasa-alpha.vercel.app${URI}`; // URL untuk webhook
 
-// Route GET untuk memastikan bot berjalan
-app.get("/api/tele", (req, res) => {
-  res.send("Bot Telegram Anda sudah berjalan!");
-});
-
-// Endpoint webhook
+// Endpoint untuk webhook
 app.post(URI, async (req, res) => {
-  const chatId = req.body.message.chat.id;
-  const text = req.body.message.text;
+  const { message } = req.body;
 
-  // Balasan sederhana
-  const responseText = `Halo, Anda mengirim: ${text}`;
+  // Pastikan ada pesan yang diterima
+  if (!message || !message.text) {
+    return res.status(200).send();
+  }
 
+  const chatId = message.chat.id;
+  const text = message.text;
+
+  let responseText;
+
+  // Tangani pesan /start
+  if (text === "/start") {
+    responseText = "Selamat datang di bot kami! Ketikkan sesuatu untuk mulai.";
+  } else {
+    responseText = `Halo, Anda mengirim: ${text}`;
+  }
+
+  // Kirim balasan ke Telegram
   await fetch(`${TELEGRAM_API}/sendMessage`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -32,10 +42,10 @@ app.post(URI, async (req, res) => {
     }),
   });
 
-  return res.send();
+  return res.status(200).send(); // Selesaikan request webhook
 });
 
-// Endpoint untuk set webhook
+// Endpoint untuk menyetel webhook
 app.get("/", async (req, res) => {
   const setWebhook = await fetch(`${TELEGRAM_API}/setWebhook`, {
     method: "POST",
@@ -46,7 +56,12 @@ app.get("/", async (req, res) => {
   });
 
   const webhookResponse = await setWebhook.json();
-  res.send(webhookResponse);
+  res.send(webhookResponse); // Kirim hasil penyetelan webhook
+});
+
+// Endpoint GET untuk pengujian
+app.get("/api/bots", (req, res) => {
+  res.send("Bot Telegram Anda sudah berjalan!");
 });
 
 // Jalankan server
