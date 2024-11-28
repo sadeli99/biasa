@@ -60,7 +60,7 @@ app.get("/", async (req, res) => {
 });
 
 // Endpoint GET untuk pengujian
-app.get("/api/bots", (req, res) => {
+app.get("/api/tele", (req, res) => {
   res.send("Bot Telegram Anda sudah berjalan!");
 });
 
