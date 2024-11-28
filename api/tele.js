@@ -5,12 +5,17 @@ const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
 
-const TOKEN = "7799759103:AAEn03hiwvEVBmG7_2H11t4eC3JFS78v-DU"; // Ganti dengan token bot Anda
+const TOKEN = "your-telegram-bot-token"; // Ganti dengan token bot Anda
 const TELEGRAM_API = `https://api.telegram.org/bot${TOKEN}`;
 const URI = `/webhook/${TOKEN}`;
-const WEBHOOK_URL = `https://biasa-alpha.vercel.app${URI}`; // Ganti dengan URL Vercel Anda
+const WEBHOOK_URL = `https://your-vercel-domain.vercel.app${URI}`; // Ganti dengan domain Vercel Anda
 
-// Set webhook endpoint
+// Route GET untuk memastikan bot berjalan
+app.get("/api/tele", (req, res) => {
+  res.send("Bot Telegram Anda sudah berjalan!");
+});
+
+// Endpoint webhook
 app.post(URI, async (req, res) => {
   const chatId = req.body.message.chat.id;
   const text = req.body.message.text;
@@ -30,7 +35,7 @@ app.post(URI, async (req, res) => {
   return res.send();
 });
 
-// Set webhook saat aplikasi dijalankan
+// Endpoint untuk set webhook
 app.get("/", async (req, res) => {
   const setWebhook = await fetch(`${TELEGRAM_API}/setWebhook`, {
     method: "POST",
