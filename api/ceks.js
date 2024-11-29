@@ -1,14 +1,18 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
+const chromium = require('chrome-aws-lambda');
 
 module.exports = async (req, res) => {
   const url = 'https://tv3.idlix.asia/episode/when-the-phone-rings-season-1-episode-1/'; // Ganti dengan URL target
 
   try {
-    // Luncurkan Puppeteer
+    // Luncurkan Puppeteer menggunakan Chromium dari Vercel
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'], // Diperlukan untuk Vercel
+      executablePath: await chromium.executablePath, // Gunakan Chromium yang disediakan Vercel
+      args: chromium.args, // Argumen yang disarankan untuk lingkungan serverless
+      defaultViewport: chromium.defaultViewport,
     });
+
     const page = await browser.newPage();
 
     // Buka halaman target
