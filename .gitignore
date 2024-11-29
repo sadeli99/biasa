@@ -1,1 +1,26 @@
-node_modules
+# Node.js dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+
+# Vercel configuration
+.vercel/
+
+# MacOS system files
+.DS_Store
+
+# Environment files
+.env
+
+# NPM package lock file (optional, but sometimes useful to ignore)
+package-lock.json
+
+# Puppeteer/Chrome download folder (do not commit it)
+.puppeteer/
+
+# Vercel production files
+*.vercel/
