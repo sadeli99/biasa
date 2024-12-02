@@ -25,20 +25,37 @@ module.exports = async (req, res) => {
 
     try {
         // API URL dari Site24x7 untuk email validation
-        const apiUrl = `https://www.site24x7.com/tools/email-validator?emails=${email}`;
-        
-        // Mengirimkan permintaan GET ke API dengan node-fetch
-        const response = await fetch(apiUrl);
+        const apiUrl = 'https://www.site24x7.com/tools/email-validator';
+
+        // Mengirimkan permintaan POST ke API dengan body berisi email
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ emails: [email] })
+        });
+
         const data = await response.json();
 
-        // Memeriksa apakah reason-nya berisi 'OK'
-        const emailResult = data.results && data.results[gmail.com] && data.results[gmail.com][email];
+        // Memeriksa status pada hasil response
+        const emailResult = data.results && data.results['gmail.com'] && data.results['gmail.com'][email];
         
-        if (emailResult && emailResult.reason.includes('OK')) {
-            return res.status(200).json({ emailExists: true, message: 'Email terdaftar dan valid!' });
-        } else {
-            return res.status(200).json({ emailExists: false, message: 'Email tidak terdaftar atau tidak valid.' });
+        if (emailResult) {
+            // Jika status adalah 250, maka email valid
+            if (emailResult.status === 250) {
+                return res.status(200).json({ emailExists: true, message: 'Email terdaftar dan valid!' });
+            }
+
+            // Jika status adalah 550, maka email tidak valid
+            if (emailResult.status === 550) {
+                return res.status(200).json({ emailExists: false, message: 'Email tidak valid (akun tidak ada).' });
+            }
         }
+
+        // Jika status tidak ditemukan atau tidak sesuai, beri pesan umum
+        return res.status(200).json({ emailExists: false, message: 'Email tidak terdaftar atau tidak valid.' });
+
     } catch (error) {
         console.error('Error:', error);
         return res.status(500).json({ error: 'Terjadi kesalahan saat memverifikasi email.' });
