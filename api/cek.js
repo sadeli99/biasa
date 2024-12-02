@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const querystring = require('querystring');
 
 module.exports = async (req, res) => {
     // Menambahkan header CORS ke dalam respons
@@ -26,15 +27,21 @@ module.exports = async (req, res) => {
 
     try {
         // API URL dari Site24x7 untuk email validation
-        const apiUrl = `https://www.site24x7.com/tools/email-validator?emails=${encodeURIComponent(email)}`;
+        const apiUrl = `https://www.site24x7.com/tools/email-validator`;
 
-        // Mengirimkan permintaan GET ke API dengan email di parameter
+        // Membuat body dalam format application/x-www-form-urlencoded
+        const body = querystring.stringify({
+            emails: email, // Mengirimkan email dalam format URL-encoded
+        });
+
+        // Mengirimkan permintaan POST dengan header yang sesuai
         const response = await fetch(apiUrl, {
-            method: 'GET',
+            method: 'POST',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': '*/*', // Tidak perlu X-Requested-With lagi
             },
+            body: body, // Menyertakan body dalam format URL-encoded
         });
 
         const data = await response.json();
