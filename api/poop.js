@@ -24,8 +24,8 @@ module.exports = async (req, res) => {
         return;
     }
 
-    const targetUrl = `https://poophd.vip/p0?id=${id}`;
-    const targetUrl2 = `https://poophd.vip/d/${id}`;
+    const targetUrl = `https://poophd.cc/p0?id=${id}`;
+    const targetUrl2 = `https://poophd.cc/d/${id}`;
 
     
     try {
