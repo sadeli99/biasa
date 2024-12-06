@@ -88,7 +88,7 @@ module.exports = async (req, res) => {
 
             const headers = {
                 "content-type": "application/json",
-                "accept": "application/json, text/plain, */*",
+                "accept": "application/json",
                 "user-agent": getRandomUserAgent(),
                 "origin": "https://likesjet.com",
                 "referer": "https://likesjet.com/",
@@ -96,7 +96,7 @@ module.exports = async (req, res) => {
             };
 
             // Request ke ScraperAPI
-            const apiUrl = 'https://api.likesjet.com/freeboost/7';
+            const apiUrl = "https://api.likesjet.com/freeboost/7";
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
