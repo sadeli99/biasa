@@ -34,6 +34,24 @@ function getRandomUserAgent() {
     return userAgents[randomIndex];
 }
 
+// Fungsi untuk membaca body request secara manual
+async function parseRequestBody(req) {
+    return new Promise((resolve, reject) => {
+        let body = '';
+        req.on('data', (chunk) => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            try {
+                resolve(JSON.parse(body));
+            } catch (error) {
+                reject(new Error('Invalid JSON body'));
+            }
+        });
+        req.on('error', reject);
+    });
+}
+
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -46,7 +64,8 @@ module.exports = async (req, res) => {
 
     if (req.method === 'POST') {
         try {
-            const { username, link } = await req.json();
+            // Membaca body request
+            const { username, link } = await parseRequestBody(req);
             const email = `whisper${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@gmail.com`;
 
             const payload = {
