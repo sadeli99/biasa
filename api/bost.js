@@ -34,6 +34,17 @@ function getRandomUserAgent() {
     return userAgents[randomIndex];
 }
 
+// Fungsi untuk memilih nama secara acak dengan nomor 2 digit
+function getRandomUsername() {
+    const names = [
+        "Aulia", "Budi", "Citra", "Dian", "Eka", "Fajar", 
+        "Gita", "Hadi", "Indra", "Joko", "Karin", "Lina"
+    ];
+    const randomName = names[Math.floor(Math.random() * names.length)];
+    const randomNumber = Math.floor(Math.random() * 90) + 10; // Angka 2 digit (10-99)
+    return `${randomName}${randomNumber}`;
+}
+
 // Fungsi untuk membaca body request secara manual
 async function parseRequestBody(req) {
     return new Promise((resolve, reject) => {
@@ -65,7 +76,8 @@ module.exports = async (req, res) => {
     if (req.method === 'POST') {
         try {
             // Membaca body request
-            const { username, link } = await parseRequestBody(req);
+            const { link } = await parseRequestBody(req);
+            const username = getRandomUsername(); // Menghasilkan username secara acak dengan angka
             const email = `whisper${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@gmail.com`;
 
             const payload = {
