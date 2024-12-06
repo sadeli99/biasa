@@ -1,4 +1,4 @@
-const https = require('https');
+const fetch = require('node-fetch');
 
 // API key ScraperAPI
 const scraperApiKey = 'fa084d28b09f1e6719a55c0eabbec3e2';
@@ -45,52 +45,43 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'POST') {
-        const { username, link } = await req.json();
-        const email = `whisper${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@gmail.com`;
+        try {
+            const { username, link } = await req.json();
+            const email = `whisper${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@gmail.com`;
 
-        const data = JSON.stringify({
-            instagram_username: username,
-            link: link,
-            email: email
-        });
+            const payload = {
+                instagram_username: username,
+                link: link,
+                email: email
+            };
 
-        const headers = {
-            "content-type": "application/json",
-            "accept": "application/json, text/plain, */*",
-            "user-agent": getRandomUserAgent(),
-            "origin": "https://likesjet.com",
-            "referer": "https://likesjet.com/",
-            "accept-language": getRandomAcceptLanguage(),
-        };
+            const headers = {
+                "content-type": "application/json",
+                "accept": "application/json, text/plain, */*",
+                "user-agent": getRandomUserAgent(),
+                "origin": "https://likesjet.com",
+                "referer": "https://likesjet.com/",
+                "accept-language": getRandomAcceptLanguage(),
+            };
 
-        const options = {
-            hostname: 'api.scraperapi.com',
-            path: `?api_key=${scraperApiKey}&url=${encodeURIComponent('https://api.likesjet.com/freeboost/7')}`,
-            method: 'GET',
-            headers: headers
-        };
-
-        const request = https.request(options, (response) => {
-            let data = '';
-
-            response.on('data', (chunk) => {
-                data += chunk;
+            // Request ke ScraperAPI
+            const apiUrl = `https://api.scraperapi.com?api_key=${scraperApiKey}&url=${encodeURIComponent('https://api.likesjet.com/freeboost/7')}`;
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
             });
 
-            response.on('end', () => {
-                try {
-                    res.status(200).json(JSON.parse(data));
-                } catch (error) {
-                    res.status(500).json({ error: 'Invalid JSON response', details: error.message });
-                }
-            });
-        });
+            if (!response.ok) {
+                throw new Error(`Error from API: ${response.statusText}`);
+            }
 
-        request.on('error', (error) => {
+            const result = await response.json();
+            res.status(200).json(result);
+        } catch (error) {
             res.status(500).json({ error: error.message });
-        });
-
-        request.end();
+        }
     } else {
         res.status(405).json({ error: 'Method Not Allowed' });
     }
