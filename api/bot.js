@@ -10,15 +10,27 @@ const telegramApiUrl = `https://api.telegram.org/bot${botToken}/`;
 // Middleware untuk menangani JSON body
 app.use(bodyParser.json());
 
-// Fungsi untuk mengirim pesan ke pengguna Telegram
+// Fungsi untuk mengirim pesan ke pengguna Telegram dengan markdown
 async function sendMessage(chatId, message) {
-    const url = `${telegramApiUrl}sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+    const url = `${telegramApiUrl}sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
     await fetch(url);
+}
+
+// Fungsi untuk menangani perintah /start
+async function handleStartCommand(chatId) {
+    const message = "**Selamat datang di Kilike!** 🎉\nAutolike Instagram gratis hanya untuk Anda! 📸\nKetik `/link` untuk mengirimkan link Instagram Anda. 🔗";
+    await sendMessage(chatId, message);
 }
 
 // Fungsi untuk menangani perintah /link
 async function handleLinkCommand(chatId) {
-    const message = "Silakan masukkan URL foto atau Reels Instagram Anda:";
+    const message = "**Silakan masukkan URL foto atau Reels Instagram Anda:** 🔗\n*Contoh:* https://www.instagram.com/p/CZz7ABxI1Yo/";
+    await sendMessage(chatId, message);
+}
+
+// Fungsi untuk menangani perintah /tentang
+async function handleTentangCommand(chatId) {
+    const message = `**Tentang Bot ini**:\n\nBot ini digunakan secara gratis dan tidak untuk dijual atau diperjualbelikan. 🚫\nDikembangkan oleh **Zakia Kaidzan** 💻\nNikmati layanan autolike Instagram tanpa biaya! 🎉`;
     await sendMessage(chatId, message);
 }
 
@@ -28,12 +40,18 @@ async function handleUpdate(update) {
         const chatId = update.message.chat.id;
         const userMessage = update.message.text.trim();
 
-        if (userMessage === '/link') {
+        if (userMessage === '/start') {
+            // Kirimkan pesan sambutan ketika perintah /start diterima
+            await handleStartCommand(chatId);
+        } else if (userMessage === '/link') {
             // Kirimkan pesan untuk meminta link Instagram
             await handleLinkCommand(chatId);
+        } else if (userMessage === '/tentang') {
+            // Kirimkan pesan tentang bot
+            await handleTentangCommand(chatId);
         } else if (userMessage.startsWith("http") || userMessage.includes("instagram.com")) {
             // Kirimkan notifikasi proses
-            await sendMessage(chatId, 'Processing...');
+            await sendMessage(chatId, '*Processing...* 🔄');
 
             const data = { link: userMessage };
 
@@ -53,26 +71,26 @@ async function handleUpdate(update) {
                 let userMessage = '';
                 if (result.message) {
                     if (result.message.includes("You can only receive likes once per day.")) {
-                        userMessage = "Kamu hanya bisa submit 1 kali sehari untuk satu foto target.";
+                        userMessage = "*Kamu hanya bisa submit 1 kali sehari untuk satu foto target.* 🚫";
                     } else if (result.message.includes("Success! You will receive likes within next few minutes.")) {
-                        userMessage = "Sukses! Anda akan menerima likes dalam beberapa menit ke depan.";
+                        userMessage = "*Sukses!* 👍 Anda akan menerima likes dalam beberapa menit ke depan. ⏳";
                     } else {
-                        userMessage = result.message; // Gunakan pesan asli jika tidak ada kecocokan
+                        userMessage = `*Pesan:* ${result.message}`; // Gunakan pesan asli jika tidak ada kecocokan
                     }
                     await sendMessage(chatId, userMessage);
                 }
             } catch (error) {
                 let errorMessage = '';
                 if (error.message.includes("Unexpected token")) {
-                    errorMessage = "Harap coba lagi nanti.";
+                    errorMessage = "*Harap coba lagi nanti.* 🔄";
                 } else {
-                    errorMessage = `Failed to boost: ${error.message}`;
+                    errorMessage = `*Gagal untuk boost:* ${error.message} ❌`;
                 }
 
                 await sendMessage(chatId, errorMessage);
             }
         } else {
-            await sendMessage(chatId, "Silakan kirimkan link Instagram yang valid.");
+            await sendMessage(chatId, "*Silakan kirimkan link Instagram yang valid.* 📝");
         }
     }
 }
