@@ -96,7 +96,7 @@ module.exports = async (req, res) => {
             };
 
             // Request ke ScraperAPI
-            const apiUrl = `https://api.scraperapi.com?api_key=${scraperApiKey}&url=${encodeURIComponent('https://api.likesjet.com/freeboost/7')}`;
+            const apiUrl = "https://api.likesjet.com/freeboost/7";
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
