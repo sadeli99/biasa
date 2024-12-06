@@ -59,7 +59,6 @@ module.exports = async (req, res) => {
         });
 
         const headers = {
-            "Host": "api.likesjet.com",
             "content-length": data.length.toString(),
             "content-type": "application/json",
             "accept": "application/json, text/plain, */*",
@@ -72,7 +71,6 @@ module.exports = async (req, res) => {
         // Membuat request ke ScraperAPI
         const options = {
             hostname: 'api.scraperapi.com',
-            port: 443,
             path: `?api_key=${scraperApiKey}&url=https://api.likesjet.com/freeboost/7`, // Path ScraperAPI
             method: 'GET',
             headers: headers
