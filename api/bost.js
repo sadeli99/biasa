@@ -35,21 +35,17 @@ function getRandomUserAgent() {
 }
 
 module.exports = async (req, res) => {
-    // Menambahkan header CORS ke dalam respons
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Mengatasi preflight request (OPTIONS)
     if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
     }
 
-    // Menangani permintaan POST
     if (req.method === 'POST') {
-        // Mendapatkan data dari request body
-        const { username, link } = req.body;
+        const { username, link } = await req.json();
         const email = `whisper${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@gmail.com`;
 
         const data = JSON.stringify({
@@ -59,19 +55,17 @@ module.exports = async (req, res) => {
         });
 
         const headers = {
-            "content-length": data.length.toString(),
             "content-type": "application/json",
             "accept": "application/json, text/plain, */*",
-            "user-agent": getRandomUserAgent(), // Gunakan User-Agent acak
+            "user-agent": getRandomUserAgent(),
             "origin": "https://likesjet.com",
             "referer": "https://likesjet.com/",
-            "accept-language": getRandomAcceptLanguage(), // Gunakan Accept-Language acak
+            "accept-language": getRandomAcceptLanguage(),
         };
 
-        // Membuat request ke ScraperAPI
         const options = {
             hostname: 'api.scraperapi.com',
-            path: `?api_key=${scraperApiKey}&url=https://api.likesjet.com/freeboost/7`, // Path ScraperAPI
+            path: `?api_key=${scraperApiKey}&url=${encodeURIComponent('https://api.likesjet.com/freeboost/7')}`,
             method: 'GET',
             headers: headers
         };
@@ -84,8 +78,11 @@ module.exports = async (req, res) => {
             });
 
             response.on('end', () => {
-                // Mengirimkan respons JSON ke client
-                res.status(200).json(JSON.parse(data));
+                try {
+                    res.status(200).json(JSON.parse(data));
+                } catch (error) {
+                    res.status(500).json({ error: 'Invalid JSON response', details: error.message });
+                }
             });
         });
 
@@ -93,7 +90,6 @@ module.exports = async (req, res) => {
             res.status(500).json({ error: error.message });
         });
 
-        // Kirimkan request
         request.end();
     } else {
         res.status(405).json({ error: 'Method Not Allowed' });
