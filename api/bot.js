@@ -10,6 +10,9 @@ const telegramApiUrl = `https://api.telegram.org/bot${botToken}/`;
 // Middleware untuk menangani JSON body
 app.use(bodyParser.json());
 
+// Menyimpan status user (digunakan untuk melacak apakah proses dihentikan atau tidak)
+const userStatus = {}; // Format: { chatId: { stopped: boolean } }
+
 // Fungsi untuk mengirim pesan ke pengguna Telegram dengan markdown
 async function sendMessage(chatId, message) {
     const url = `${telegramApiUrl}sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}&parse_mode=Markdown`;
@@ -18,13 +21,30 @@ async function sendMessage(chatId, message) {
 
 // Fungsi untuk menangani perintah /start
 async function handleStartCommand(chatId) {
+    userStatus[chatId] = { stopped: false }; // Set status awal: tidak dihentikan
     const message = "**Selamat datang di Kilike!** 🎉\nAutolike Instagram gratis hanya untuk Anda! 📸\nKetik `/link` untuk mengirimkan link Instagram Anda. 🔗";
     await sendMessage(chatId, message);
 }
 
 // Fungsi untuk menangani perintah /link
 async function handleLinkCommand(chatId) {
+    if (userStatus[chatId]?.stopped) {
+        const message = "*Proses sedang dihentikan.* Ketik `/start` untuk memulai kembali. ❌";
+        await sendMessage(chatId, message);
+        return;
+    }
+
     const message = "**Silakan masukkan URL foto atau Reels Instagram Anda:** 🔗\n*Contoh:* https://www.instagram.com/p/CZz7ABxI1Yo/";
+    await sendMessage(chatId, message);
+}
+
+// Fungsi untuk menangani perintah /stop
+async function handleStopCommand(chatId) {
+    if (!userStatus[chatId]) {
+        userStatus[chatId] = { stopped: false };
+    }
+    userStatus[chatId].stopped = true; // Tandai bahwa proses dihentikan
+    const message = "*Semua proses telah dihentikan.* 🚫\nKetik `/start` untuk memulai kembali.";
     await sendMessage(chatId, message);
 }
 
@@ -46,10 +66,18 @@ async function handleUpdate(update) {
         } else if (userMessage === '/link') {
             // Kirimkan pesan untuk meminta link Instagram
             await handleLinkCommand(chatId);
+        } else if (userMessage === '/stop') {
+            // Hentikan semua proses saat ini
+            await handleStopCommand(chatId);
         } else if (userMessage === '/tentang') {
             // Kirimkan pesan tentang bot
             await handleTentangCommand(chatId);
         } else if (userMessage.startsWith("http") || userMessage.includes("instagram.com")) {
+            if (userStatus[chatId]?.stopped) {
+                await sendMessage(chatId, "*Proses sedang dihentikan.* Ketik `/start` untuk memulai kembali. ❌");
+                return;
+            }
+
             // Kirimkan notifikasi proses
             await sendMessage(chatId, '*Processing...* 🔄');
 
