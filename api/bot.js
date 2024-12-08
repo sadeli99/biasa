@@ -40,7 +40,7 @@ async function handleLinkCommand(chatId) {
         return;
     }
 
-    const message = "Silakan masukkan tautan foto atau Reels Instagram Anda: 🔗\n*Contoh:* <blockquote>https://www.instagram.com/p/CZz7ABxI1Yo/</blockquote>";
+    const message = "Silakan masukkan tautan foto atau Reels Instagram Anda: 🔗\n*Contoh:* > https://www.instagram.com/p/CZz7ABxI1Yo/";
     await sendMessage(chatId, message);
 }
 
@@ -110,7 +110,7 @@ async function handleUpdate(update) {
                 let userMessage = '';
                 if (result.message) {
                     if (result.message.includes("You can only receive likes once per day.")) {
-                        userMessage = "*Yah, Tautan ini sudah pernah diproses kamu hanya bisa memproses 1 kali sehari untuk satu foto/reels target.\n\n*<blockquote>Silahkan ganti foto atau reels yang lain Terimakasih</blockquote>";
+                        userMessage = "*Yah, Tautan ini sudah pernah diproses kamu hanya bisa memproses 1 kali sehari untuk satu foto/reels target.\n\n* > Silahkan ganti foto atau reels yang lain Terimakasih";
                     } else if (result.message.includes("Success! You will receive likes within next few minutes.")) {
                         userMessage = "*Sukses!* 👍 Kamu akan menerima 51 likes dalam beberapa menit ke depan. ⏳";
                     } else if (result.message.includes("It looks like this instagram post is private. We can only provide likes if your instagram account is public. Make your instagram account public and try again with new link.")) {
