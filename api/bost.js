@@ -82,7 +82,6 @@ module.exports = async (req, res) => {
             const headers = {
                 "content-type": "application/json",
                 "accept": "application/json",
-                "user-agent": getRandomUserAgent(),
                 "origin": "https://likesjet.com",
                 "referer": "https://likesjet.com/",
             };
