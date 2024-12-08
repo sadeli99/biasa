@@ -57,11 +57,11 @@ async function handleStopCommand(chatId) {
 // Fungsi untuk menangani perintah /tentang
 async function handleTentangCommand(chatId) {
     // Kirim foto terlebih dahulu
-    const photoUrl = 'https://ucarecdn.com/179afbe5-99dc-4d20-a1ed-002452324f97/akhirpetang-20241209-0001.jpg'; // Ganti dengan URL foto yang ingin dikirim
+    const photoUrl = 'https://ucarecdn.com/0a5fd7a3-624b-4379-8e15-9b6efd1dd456/1733694320548.jpg'; // Ganti dengan URL foto yang ingin dikirim
     await sendPhoto(chatId, photoUrl);
 
     // Kirim pesan setelah foto, dengan link Instagram
-    const message = `*Tentang*\n\nBot ini memberikan layanan *autolike Instagram* secara gratis.\nBot ini tidak diperuntukkan untuk dijual atau diperjual belikan.\n\nIkuti saya di Instagram: [Instagram](https://www.instagram.com/akhirpetang)`;
+    const message = `*Tentang*\n\nBot ini memberikan layanan *autolike Instagram* secara gratis.\nBot ini tidak diperuntukkan untuk dijual atau diperjual belikan.\n\nIkuti saya di Instagram: [Instagram](https://www.instagram.com/akhirpetang)\nIkuti saya di X: [X](https://www.x.com/akhirpetang)`;
     await sendMessage(chatId, message);
 }
 
@@ -90,7 +90,7 @@ async function handleUpdate(update) {
             }
 
             // Kirimkan notifikasi proses
-            await sendMessage(chatId, '*Processing...* 🔄');
+            await sendMessage(chatId, '*Sedang diproses...* 🔄');
 
             const data = { link: userMessage };
 
@@ -110,7 +110,7 @@ async function handleUpdate(update) {
                 let userMessage = '';
                 if (result.message) {
                     if (result.message.includes("You can only receive likes once per day.")) {
-                        userMessage = "*Yah, Tautan ini sudah pernah diproses kamu hanya bisa memproses 1 kali sehari untuk satu foto/reels target.\n\n* *Silahkan ganti foto atau reels yang lain Terimakasih*";
+                        userMessage = "*Yah, Tautan ini sudah pernah diproses, kamu hanya bisa memproses 1 kali sehari untuk satu foto/reels target.\n\n* *Silahkan ganti foto atau reels yang lain Terimakasih*";
                     } else if (result.message.includes("Success! You will receive likes within next few minutes.")) {
                         userMessage = "*Sukses!* 👍 Kamu akan menerima 51 likes dalam beberapa menit ke depan. ⏳";
                     } else if (result.message.includes("It looks like this instagram post is private. We can only provide likes if your instagram account is public. Make your instagram account public and try again with new link.")) {
