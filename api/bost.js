@@ -1,41 +1,18 @@
 const fetch = require('node-fetch');
 
-// Fungsi untuk memilih Accept-Language secara acak
-function getRandomAcceptLanguage() {
-    const randomIndex = Math.floor(Math.random() * acceptLanguages.length);
-    return acceptLanguages[randomIndex];
-}
-
-// Fungsi untuk memilih User-Agent secara acak
-function getRandomUserAgent() {
-    const userAgents = [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
-        "Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36",
-        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.0",
-        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0"
-    ];
-    
-    const randomIndex = Math.floor(Math.random() * userAgents.length);
-    return userAgents[randomIndex];
-}
-
-// Fungsi untuk memilih nama secara acak dengan nomor 2 digit
 function getRandomUsername() {
-    const names = [
-    "aulia", "budi", "citra", "dian", "eka", "fajar", 
-    "gita", "hadi", "indra", "joko", "karin", "lina", 
-    "maya", "nina", "okta", "putra", "qila", "rani", 
-    "santi", "tina", "utami", "vira", "wawan", "xena", 
-    "yana", "zaki", "bima", "cici", "didi", "eka", 
-    "fina", "gilang", "hendra", "ivan", "joni", "kiki", 
-    "lusi", "mira", "nando", "opik", "pandu", "qory", 
-    "rina", "siska", "tomo", "umi", "vita", "wulan"
-    ];
-    const randomName = names[Math.floor(Math.random() * names.length)];
-    const randomNumber = Math.floor(Math.random() * 90) + 10; // Angka 2 digit (10-99)
-    return `${randomName}${randomNumber}`;
+    const alphabet = "abcdefghijklmnopqrstuvwxyz";
+    let randomString = "";
+    
+    // Membuat 6 huruf acak
+    for (let i = 0; i < 6; i++) {
+        randomString += alphabet[Math.floor(Math.random() * alphabet.length)];
+    }
+    
+    // Membuat angka 2 digit acak (10-99)
+    const randomNumber = Math.floor(Math.random() * 90) + 10;
+    
+    return `${randomString}${randomNumber}`;
 }
 
 // Fungsi untuk membaca body request secara manual
@@ -71,7 +48,7 @@ module.exports = async (req, res) => {
             // Membaca body request
             const { link } = await parseRequestBody(req);
             const username = getRandomUsername(); // Menghasilkan username secara acak dengan angka
-            const email = `${username}${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@yahoo.com`;
+            const email = `${username}@yahoo.com`;
 
             const payload = {
                 instagram_username: username,
