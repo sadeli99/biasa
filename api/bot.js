@@ -19,6 +19,12 @@ async function sendMessage(chatId, message) {
     await fetch(url);
 }
 
+// Fungsi untuk mengirim foto ke pengguna Telegram
+async function sendPhoto(chatId, photoUrl) {
+    const url = `${telegramApiUrl}sendPhoto?chat_id=${chatId}&photo=${encodeURIComponent(photoUrl)}`;
+    await fetch(url);
+}
+
 // Fungsi untuk menangani perintah /start
 async function handleStartCommand(chatId) {
     userStatus[chatId] = { stopped: false }; // Set status awal: tidak dihentikan
@@ -50,7 +56,12 @@ async function handleStopCommand(chatId) {
 
 // Fungsi untuk menangani perintah /tentang
 async function handleTentangCommand(chatId) {
-    const message = `**Tentang Bot ini**:\n\nBot ini digunakan secara gratis dan tidak untuk dijual atau diperjualbelikan. 🚫\nDikembangkan oleh **Zakia Kaidzan** 💻\nNikmati layanan autolike Instagram tanpa biaya! 🎉`;
+    // Kirim foto terlebih dahulu
+    const photoUrl = 'https://ucarecdn.com/179afbe5-99dc-4d20-a1ed-002452324f97/akhirpetang-20241209-0001.jpg'; // Ganti dengan URL foto yang ingin dikirim
+    await sendPhoto(chatId, photoUrl);
+
+    // Kirim pesan setelah foto, dengan link Instagram
+    const message = `**Tentang Bot ini**:\n\nBot ini digunakan secara gratis dan tidak untuk dijual atau diperjualbelikan. 🚫\nDikembangkan oleh **Zakia Kaidzan** 💻\nNikmati layanan autolike Instagram tanpa biaya! 🎉\n\nIkuti Instagram saya di: [Instagram](https://instagram.com/akhirpetang)`;
     await sendMessage(chatId, message);
 }
 
@@ -102,6 +113,8 @@ async function handleUpdate(update) {
                         userMessage = "*Kamu hanya bisa submit 1 kali sehari untuk satu foto target.* 🚫";
                     } else if (result.message.includes("Success! You will receive likes within next few minutes.")) {
                         userMessage = "*Sukses!* 👍 Anda akan menerima likes dalam beberapa menit ke depan. ⏳";
+                    } else if (result.message.includes("It looks like this instagram post is private. We can only provide likes if your instagram account is public. Make your instagram account public and try again with new link.")) {
+                        userMessage = "📢 *Pesan:* \nSepertinya postingan Instagram ini bersifat *privat*. Kami hanya dapat memberikan *likes* jika akun Instagram Anda bersifat *publik*. \n\n🔓 *Jadikan akun Instagram Anda publik, lalu coba lagi dengan tautan baru.*";
                     } else {
                         userMessage = `*Pesan:* ${result.message}`; // Gunakan pesan asli jika tidak ada kecocokan
                     }
