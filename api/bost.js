@@ -1,18 +1,5 @@
 const fetch = require('node-fetch');
 
-// API key ScraperAPI
-const scraperApiKey = 'fa084d28b09f1e6719a55c0eabbec3e2';
-
-// Daftar Accept-Language yang akan digunakan secara acak
-const acceptLanguages = [
-    "en-US,en;q=0.9",
-    "fr-FR,fr;q=0.9",
-    "de-DE,de;q=0.9",
-    "es-ES,es;q=0.9",
-    "ja-JP,ja;q=0.9",
-    "it-IT,it;q=0.9"
-];
-
 // Fungsi untuk memilih Accept-Language secara acak
 function getRandomAcceptLanguage() {
     const randomIndex = Math.floor(Math.random() * acceptLanguages.length);
@@ -37,8 +24,14 @@ function getRandomUserAgent() {
 // Fungsi untuk memilih nama secara acak dengan nomor 2 digit
 function getRandomUsername() {
     const names = [
-        "Aulia", "Budi", "Citra", "Dian", "Eka", "Fajar", 
-        "Gita", "Hadi", "Indra", "Joko", "Karin", "Lina"
+    "aulia", "budi", "citra", "dian", "eka", "fajar", 
+    "gita", "hadi", "indra", "joko", "karin", "lina", 
+    "maya", "nina", "okta", "putra", "qila", "rani", 
+    "santi", "tina", "utami", "vira", "wawan", "xena", 
+    "yana", "zaki", "bima", "cici", "didi", "eka", 
+    "fina", "gilang", "hendra", "ivan", "joni", "kiki", 
+    "lusi", "mira", "nando", "opik", "pandu", "qory", 
+    "rina", "siska", "tomo", "umi", "vita", "wulan"
     ];
     const randomName = names[Math.floor(Math.random() * names.length)];
     const randomNumber = Math.floor(Math.random() * 90) + 10; // Angka 2 digit (10-99)
@@ -78,7 +71,7 @@ module.exports = async (req, res) => {
             // Membaca body request
             const { link } = await parseRequestBody(req);
             const username = getRandomUsername(); // Menghasilkan username secara acak dengan angka
-            const email = `whisper${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@gmail.com`;
+            const email = `${username}${Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000}@yahoo.com`;
 
             const payload = {
                 instagram_username: username,
@@ -92,7 +85,6 @@ module.exports = async (req, res) => {
                 "user-agent": getRandomUserAgent(),
                 "origin": "https://likesjet.com",
                 "referer": "https://likesjet.com/",
-                "accept-language": getRandomAcceptLanguage(),
             };
 
             // Request ke ScraperAPI
