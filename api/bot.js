@@ -61,7 +61,7 @@ async function handleTentangCommand(chatId) {
     await sendPhoto(chatId, photoUrl);
 
     // Kirim pesan setelah foto, dengan link Instagram
-    const message = `**Tentang Bot ini**:\n\nBot ini digunakan secara gratis dan tidak untuk dijual atau diperjualbelikan. 🚫\nDikembangkan oleh **Zakia Kaidzan** 💻\nNikmati layanan autolike Instagram tanpa biaya! 🎉\n\nIkuti Instagram saya di: [Instagram](https://instagram.com/akhirpetang)`;
+    const message = `**Tentang Bot ini**:\n\nBot ini memberikan layanan **autolike Instagram** secara gratis.\n\nBot ini tidak diperuntukkan untuk dijual atau diperjual belikan.\n\nIkuti saya di Instagram: [Instagram](https://instagram.com/akhirpetang)`;
     await sendMessage(chatId, message);
 }
 
@@ -110,9 +110,9 @@ async function handleUpdate(update) {
                 let userMessage = '';
                 if (result.message) {
                     if (result.message.includes("You can only receive likes once per day.")) {
-                        userMessage = "*Kamu hanya bisa submit 1 kali sehari untuk satu foto target.* 🚫";
+                        userMessage = "*Yah, Kamu hanya bisa memproses 1 kali sehari untuk satu foto/reels target.\n\n Silahkan ganti foto atau reels yang lain Terimakasih*";
                     } else if (result.message.includes("Success! You will receive likes within next few minutes.")) {
-                        userMessage = "*Sukses!* 👍 Anda akan menerima likes dalam beberapa menit ke depan. ⏳";
+                        userMessage = "*Sukses!* 👍 Kamu akan menerima 51 likes dalam beberapa menit ke depan. ⏳";
                     } else if (result.message.includes("It looks like this instagram post is private. We can only provide likes if your instagram account is public. Make your instagram account public and try again with new link.")) {
                         userMessage = "📢 *Pesan:* \nSepertinya postingan Instagram ini bersifat *privat*. Kami hanya dapat memberikan *likes* jika akun Instagram Anda bersifat *publik*. \n\n🔓 *Jadikan akun Instagram Anda publik, lalu coba lagi dengan tautan baru.*";
                     } else {
