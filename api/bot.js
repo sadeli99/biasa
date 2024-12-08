@@ -4,7 +4,7 @@ const app = express();
 const bodyParser = require('body-parser');
 
 // Token Bot Telegram
-const botToken = '7497515106:AAFZNdMS1F7hfXWNUhEk8MO4CuLHYk7-Lao';
+const botToken = '8008269281:AAGoVj_hOBCxv_p2ku3YUcqpBPFkypJJV5w';
 const telegramApiUrl = `https://api.telegram.org/bot${botToken}/`;
 
 // Middleware untuk menangani JSON body
