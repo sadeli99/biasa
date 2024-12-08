@@ -1,33 +1,48 @@
 const puppeteer = require('puppeteer');
 
-async function getVideoUrl() {
-  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-  const page = await browser.newPage();
-  await page.goto('https://tv4.idlix.asia/episode/gangnam-b-side-season-1-episode-1/', {
-    waitUntil: 'networkidle2',
-  });
+module.exports = async (req, res) => {
+  try {
+    // Peluncuran Puppeteer tanpa sandbox
+    const browser = await puppeteer.launch({
+      headless: true,
+      executablePath: process.env.CHROME_EXECUTABLE_PATH || '/usr/bin/chromium',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
 
-  // Tunggu elemen .dooplay_player_option tersedia
-  await page.waitForSelector('.dooplay_player_option');
+    const page = await browser.newPage();
+    const url = 'https://tv4.idlix.asia/episode/gangnam-b-side-season-1-episode-1/';
 
-  // Klik elemen kedua jika ada
-  const elems = await page.$$('.dooplay_player_option');
-  if (elems.length > 1) {
-    await elems[1].click();
+    // Navigasi ke halaman
+    await page.goto(url, { waitUntil: 'networkidle2' });
+
+    // Tunggu dan klik elemen pertama
+    await page.waitForSelector('.dooplay_player_option', { timeout: 10000 });
+    const elems = await page.$$('.dooplay_player_option');
+    if (elems.length > 1) {
+      await elems[1].click();
+    }
+
+    // Tangkap log aktivitas jaringan
+    const responseUrls = [];
+    page.on('response', async (response) => {
+      const requestUrl = response.url();
+      if (requestUrl.includes('https://jeniusplay.com/player/index.php')) {
+        responseUrls.push(requestUrl);
+      }
+    });
+
+    await page.waitForTimeout(5000); // Tunggu 5 detik
+
+    // Kirim hasil dalam format JSON
+    res.status(200).json({
+      message: 'Data successfully scraped',
+      urls: responseUrls,
+      total: responseUrls.length
+    });
+
+    await browser.close();
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).json({ message: 'Error occurred', error: err.message });
   }
-
-  // Tunggu beberapa detik agar halaman diperbarui
-  await page.waitForTimeout(5000);
-
-  // Ambil URL video setelah klik
-  const videoUrl = await page.evaluate(() => {
-    const videoElement = document.querySelector('video');
-    return videoElement ? videoElement.src : null;
-  });
-
-  console.log('URL Video:', videoUrl);
-
-  await browser.close();
-}
-
-getVideoUrl().catch(console.error);
+};
