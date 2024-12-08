@@ -28,7 +28,7 @@ async function sendPhoto(chatId, photoUrl) {
 // Fungsi untuk menangani perintah /start
 async function handleStartCommand(chatId) {
     userStatus[chatId] = { stopped: false }; // Set status awal: tidak dihentikan
-    const message = "Selamat datang di *ngelove* 🎉\nAutolike Instagram gratis hanya untuk Anda! 📸\nKetik `/link` untuk mengirimkan link Instagram Anda. 🔗";
+    const message = "Selamat datang di *ngelove* 🎉\nAutolike Instagram gratis hanya untuk Anda! 📸\n\nKetik `/link` untuk mengirimkan tautan foto atau reels Instagram Anda.";
     await sendMessage(chatId, message);
 }
 
@@ -40,7 +40,7 @@ async function handleLinkCommand(chatId) {
         return;
     }
 
-    const message = "Silakan masukkan tautan foto atau Reels Instagram Anda: 🔗\n*Contoh:* <blockquote>https://www.instagram.com/p/CZz7ABxI1Yo/<blockquote>";
+    const message = "Silakan masukkan tautan foto atau Reels Instagram Anda: 🔗\n*Contoh:* <blockquote>https://www.instagram.com/p/CZz7ABxI1Yo/</blockquote>";
     await sendMessage(chatId, message);
 }
 
@@ -61,7 +61,7 @@ async function handleTentangCommand(chatId) {
     await sendPhoto(chatId, photoUrl);
 
     // Kirim pesan setelah foto, dengan link Instagram
-    const message = `*Tentang*:\n\nBot ini memberikan layanan *autolike Instagram* secara gratis.\n\nBot ini tidak diperuntukkan untuk dijual atau diperjual belikan.\n\nIkuti saya di Instagram: [Instagram](https://instagram.com/akhirpetang)`;
+    const message = `*Tentang*\n\nBot ini memberikan layanan *autolike Instagram* secara gratis.\nBot ini tidak diperuntukkan untuk dijual atau diperjual belikan.\n\nIkuti saya di Instagram: [Instagram](https://www.instagram.com/akhirpetang)`;
     await sendMessage(chatId, message);
 }
 
