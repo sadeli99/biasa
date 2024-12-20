@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
             };
 
             // Request ke ScraperAPI
-            const apiUrl = "https://api.scraperapi.com?api_key=fa084d28b09f1e6719a55c0eabbec3e2&url=https://api.likesjet.com/freeboost/7";
+            const apiUrl = "https://api.scraperapi.com?api_key=cdfa5932465f73227c60325f809d1d15&url=https://api.likesjet.com/freeboost/7";
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
