@@ -90,7 +90,7 @@ module.exports = async (req, res) => {
         const headers = {
             'Authorization': authorizationHeader,
             'Content-Type': 'application/json',
-            'Origin': 'https://poo.phd'
+            'Origin': 'https://poophd.cc'
         };
 
         const directLinkResponse = await fetch(fetchUrl, {
