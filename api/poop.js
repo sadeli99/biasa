@@ -24,8 +24,8 @@ module.exports = async (req, res) => {
         return;
     }
 
-    const targetUrl = `https://poophd.cc/p0?id=${id}`;
-    const targetUrl2 = `https://poophd.cc/d/${id}`;
+    const targetUrl = `https://poo.phd/p0?id=${id}`;
+    const targetUrl2 = `https://poo.phd/d/${id}`;
 
     
     try {
@@ -90,7 +90,7 @@ module.exports = async (req, res) => {
         const headers = {
             'Authorization': authorizationHeader,
             'Content-Type': 'application/json',
-            'Origin': 'https://poophd.cc'
+            'Origin': 'https://poo.phd'
         };
 
         const directLinkResponse = await fetch(fetchUrl, {
