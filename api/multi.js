@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
                 url = url.replace(/\?top=1/, '');
 
                 // Hapus bagian /e/, /f/, atau /d/ dari URL
-                url = url.replace(/\/[dfe]\//, 'https://poophd.cc/d/');
+                url = url.replace(/\/[dfe]\//, 'https://poo.phd/d/');
 
                 // Ambil teks dari elemen
                 const text = linkElement.textContent.trim();
