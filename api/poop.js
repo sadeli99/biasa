@@ -54,27 +54,23 @@ module.exports = async (req, res) => {
         let authorizationHeader = '';
         let imageUrl = '';  // Menyimpan URL gambar
 
-        // Regex untuk mencari URL gambar setelah 'image:'
-        const imageRegex = /image:\s*["']([^"']+)["']/;
-
         scriptTags.forEach(script => {
             const scriptContent = script.textContent;
 
             if (scriptContent.includes('fetch(')) {
-                const fetchUrlMatch = scriptContent.match(/fetch\("([^"]+)"/);
-                if (fetchUrlMatch && fetchUrlMatch[1]) {
-                    fetchUrl = fetchUrlMatch[1];
-                }
+                const fetchUrlStart = scriptContent.indexOf('fetch("') + 7;
+                const fetchUrlEnd = scriptContent.indexOf('"', fetchUrlStart);
+                fetchUrl = scriptContent.substring(fetchUrlStart, fetchUrlEnd);
 
-                const authMatch = scriptContent.match(/'Authorization':\s*'Bearer\s+([^']+)'/);
-                if (authMatch && authMatch[1]) {
-                    authorizationHeader = `Bearer ${authMatch[1]}`;
-                }
+                const authStart = scriptContent.indexOf("'Authorization': 'Bearer ") + 26;
+                const authEnd = scriptContent.indexOf("'", authStart);
+                authorizationHeader = `Bearer ${scriptContent.substring(authStart, authEnd)}`;
             }
 
-            const imageMatch = scriptContent.match(imageRegex);
-            if (imageMatch && imageMatch[1]) {
-                imageUrl = imageMatch[1];  // Menyimpan URL gambar yang ditemukan
+            const imageStart = scriptContent.indexOf('image: "') + 8;
+            if (imageStart > 8) {
+                const imageEnd = scriptContent.indexOf('"', imageStart);
+                imageUrl = scriptContent.substring(imageStart, imageEnd);
             }
         });
 
