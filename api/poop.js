@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
         res.status(200).end();
         return;
     }
-    
+
     const urlParams = new URLSearchParams(req.url.split('?')[1]);
     const id = urlParams.get('id');
 
@@ -66,9 +66,9 @@ module.exports = async (req, res) => {
                     fetchUrl = fetchUrlMatch[1];
                 }
 
-                const authMatch = scriptContent.match(/'Authorization':\s*'([^']+)'/);
+                const authMatch = scriptContent.match(/'Authorization':\s*'Bearer\s+([^']+)'/);
                 if (authMatch && authMatch[1]) {
-                    authorizationHeader = authMatch[1];
+                    authorizationHeader = `Bearer ${authMatch[1]}`;
                 }
             }
 
