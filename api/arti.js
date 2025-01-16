@@ -4,7 +4,13 @@ const FormData = require('form-data'); // Mengimpor FormData untuk membuat form-
 // Fungsi untuk memuat data dari API 2short
 async function fetch2ShortData(videoId) {
     const url = `https://api.2short.ai/shorts?youtubeVideoId=${videoId}&language=id`;
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json', // Header Content-Type
+        },
+    });
+
     if (!response.ok) {
         throw new Error('Gagal memuat data dari API 2short.');
     }
