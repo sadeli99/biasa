@@ -1,60 +1,67 @@
-const fetch = require('node-fetch'); // Mengimpor node-fetch untuk melakukan HTTP request
+const fetch = require('node-fetch'); // Mengimpor node-fetch untuk HTTP request
 const FormData = require('form-data'); // Mengimpor FormData untuk membuat form-data
 
-// Fungsi untuk mengirimkan data ke API dan mengambil hasil
-async function translateText(q) {
-    // Membuat form-data
-    const form = new FormData();
-    
-    // Menambahkan data ke form-data
-    form.append('q', q); // Kata yang akan diterjemahkan
-    form.append('source', 'en'); // Bahasa sumber
-    form.append('target', 'id'); // Bahasa target
-    form.append('format', 'text'); // Format teks
-    form.append('alternatives', '3'); // Jumlah alternatif
-    form.append('api_key', ''); // API key jika ada
-    form.append('secret', '1VG5UIE'); // Secret key
-
-    // Mengirimkan request menggunakan fetch
-    const response = await fetch('https://libretranslate.com/translate', {
-        method: 'POST', // Metode HTTP yang digunakan
-        headers: {
-            'Origin': 'https://libretranslate.com', // Origin yang sesuai
-            'Referer': 'https://libretranslate.com/?source=en&target=id&q=Hi', // Referer untuk API
-            'Accept': '*/*', // Accept header
-        },
-        body: form, // Body menggunakan form-data
-    });
-
-    // Menunggu respons dari API
-    const data = await response.json(); // Mengubah respons menjadi JSON
-
-    // Mengambil dan menampilkan bagian alternatives dan translatedText
-    const alternatives = data.alternatives; 
-    const translatedText = data.translatedText;
-
-    // Membuat hasil dalam format JSON
-    const result = {
-        alternatives: alternatives,
-        translatedText: translatedText
-    };
-
-    // Mengembalikan hasil sebagai JSON
-    return result;
+// Fungsi untuk memuat data dari API 2short
+async function fetch2ShortData(videoId) {
+    const url = `https://api.2short.ai/shorts?youtubeVideoId=${videoId}&language=id`;
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error('Gagal memuat data dari API 2short.');
+    }
+    return await response.json();
 }
 
-// API Handler untuk Vercel
+// Fungsi untuk menerjemahkan teks menggunakan API LibreTranslate
+async function translateText(text) {
+    const form = new FormData();
+    form.append('q', text); // Kata yang akan diterjemahkan
+    form.append('source', 'id'); // Bahasa sumber
+    form.append('target', 'en'); // Bahasa target
+    form.append('format', 'text'); // Format teks
+
+    const response = await fetch('https://libretranslate.com/translate', {
+        method: 'POST',
+        headers: { Accept: '*/*' },
+        body: form,
+    });
+
+    if (!response.ok) {
+        throw new Error('Gagal menerjemahkan teks.');
+    }
+
+    const data = await response.json();
+    return data.translatedText;
+}
+
+// Fungsi utama untuk menggabungkan kedua API
 module.exports = async (req, res) => {
     try {
-        // Mengambil parameter q dari query string
-        const { q } = req.query;
+        const { videoId } = req.query; // Mendapatkan videoId dari query parameter
 
-        // Memanggil fungsi untuk menerjemahkan
-        const result = await translateText(q);
+        if (!videoId) {
+            return res.status(400).json({ error: 'Parameter videoId diperlukan.' });
+        }
 
-        // Mengirimkan respons dalam format JSON
-        res.status(200).json(result);
+        // Memuat data dari API 2short
+        const data = await fetch2ShortData(videoId);
+
+        // Menerjemahkan setiap title di dalam shorts
+        const translatedShorts = await Promise.all(
+            data.shorts.map(async (short) => {
+                const translatedTitle = await translateText(short.title);
+                return {
+                    ...short,
+                    title: translatedTitle, // Mengganti title dengan hasil terjemahan
+                };
+            })
+        );
+
+        // Mengembalikan data lengkap dengan title yang diterjemahkan
+        res.status(200).json({
+            ...data,
+            shorts: translatedShorts, // Menggunakan shorts dengan title yang telah diterjemahkan
+        });
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
+        res.status(500).json({ error: error.message });
     }
 };
