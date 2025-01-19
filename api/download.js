@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 
 // Bot token langsung di dalam kode
-const BOT_TOKEN = '7973401326:AAGzmlKSqHtLMMuC2wEdSRhQkKHjBgOXfJc';
+const BOT_TOKEN = '7830386071:AAFs4DT7JDb7OaeK0Cbw0UKJ62edwJNQeQY';
 const CHAT_ID = '1352694551'; // Ganti dengan Chat ID Anda
 
 module.exports = async (req, res) => {
